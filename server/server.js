@@ -19,6 +19,9 @@ var lions = [];
 var id = 0;
 
 var updateId = function(req, res, next) {
+    id++;
+    res.body.id = id + '';
+    next();
   // fill this out. this is the route middleware for the ids
 };
 
@@ -29,6 +32,13 @@ app.use(bodyParser.json());
 
 
 app.param('id', function(req, res, next, id) {
+    let index = _.findIndex(lions, {id: id});
+    if (lions[index]) {
+        req.lion = lions[index];
+        next();
+    } else {
+        res.send();
+    }
   // fill this out to find the lion based off the id
   // and attach it to req.lion. Rember to call next()
 });
@@ -64,6 +74,12 @@ app.put('/lions/:id', function(req, res) {
     var updatedLion = _.assign(lions[lion], update);
     res.json(updatedLion);
   }
+});
+
+app.use((err, req, res, next) => {
+    if (err) {
+        res.status(500).send(err)
+    }
 });
 
 app.listen(3000);
